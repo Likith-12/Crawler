@@ -5,7 +5,8 @@ from pymongo import MongoClient
 
 cluster = MongoClient("mongodb+srv://LikithPS:5EUyK6buL1xS1Spo@crawler.dacbdhe.mongodb.net/?retryWrites=true&w=majority")
 db = cluster["Pages"]
-
+collection = db["Pages1"]
+print(db.hostinfo())
 
 class Spider:
     project_name = ''
@@ -22,7 +23,6 @@ class Spider:
         Spider.domain_name = domain_name
         Spider.queue_file = Spider.project_name + '/queue.txt'
         Spider.crawled_file = Spider.project_name + '/crawled.txt'
-        Spider.collection = db[project_name]
         self.boot()
         self.crawl_page('First spider', Spider.base_url)
 
@@ -55,7 +55,7 @@ class Spider:
             head = parts[0].split('<title>')
             titles = head[1].split('</')
             doc = {"title": titles[0].strip('<'), "body": body[0]}
-            Spider.collection.insert_one(doc)
+            collection.insert_one(doc)
             finder = LinkFinder(Spider.base_url, page_url)
             finder.feed(html_string)
         except Exception as e:
